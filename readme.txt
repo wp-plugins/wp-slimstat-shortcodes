@@ -7,7 +7,7 @@ Tested up to: 3.0.1
 Stable tag: 1.0
 
 == Description ==
-This plugin is an extension of [WP SlimStat](http://wordpress.org/extend/plugins/wp-slimstat/), my plugin for tracking hits, visitors,
+This plugin is an extension for [WP SlimStat](http://wordpress.org/extend/plugins/wp-slimstat/), my plugin for tracking hits, visitors,
 pageviews and outbound clicks on your blog. I was asked if it was possible to show
 some metrics inside a post or using a widget. I decided to write a separate plugin
 to do this. This way only people who really need this feature, will have to add it
