@@ -18,7 +18,10 @@ if (__FILE__ == $_SERVER['SCRIPT_FILENAME'] ) {
 load_plugin_textdomain('countries-languages', WP_PLUGIN_DIR .'/wp-slimstat/lang', '/wp-slimstat/lang');
 
 // We rely on WP SlimStat Views Library
-require_once(WP_PLUGIN_DIR."/wp-slimstat/view/wp-slimstat-view.php");
+if (file_exists(WP_PLUGIN_DIR."/wp-slimstat/view/wp-slimstat-view.php"))
+	require_once(WP_PLUGIN_DIR."/wp-slimstat/view/wp-slimstat-view.php");
+else
+	return false;
 
 class wp_slimstat_shortcodes {
 
