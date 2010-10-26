@@ -1,5 +1,5 @@
 === WP SlimStat Shortcodes ===
-
+Contributors: coolmann
 Donate link: http://www.duechiacchiere.it/wp-slimstat
 Tags: analytics, statistics, slimstat, shortcode, tracking, stats, maxmind, fusion charts
 Requires at least: 2.9.2
