@@ -3,8 +3,8 @@ Contributors: coolmann
 Donate link: http://www.duechiacchiere.it/wp-slimstat
 Tags: analytics, statistics, slimstat, shortcode, tracking, stats, maxmind, fusion charts
 Requires at least: 2.9.2
-Tested up to: 3.0.1
-Stable tag: 1.0
+Tested up to: 3.1
+Stable tag: 1.1
 
 == Description ==
 This plugin is an extension for [WP SlimStat](http://wordpress.org/extend/plugins/wp-slimstat/), my plugin for tracking hits, visitors,
@@ -24,6 +24,10 @@ to their box, while others will continue enjoying a lightweight and fast statist
 6. Show your appreciation! Tell your friends you are using WP SlimStat Shortcodes, write an article about it!
 
 == Changelog ==
+
+= 1.1 =
+* Bug fixing
+* Added a new shortcode to return the number of hits from human visitors
 
 = 1.0 =
 * Initial release

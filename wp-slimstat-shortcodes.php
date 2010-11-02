@@ -3,7 +3,7 @@
 Plugin Name: WP SlimStat ShortCodes
 Plugin URI: http://lab.duechiacchiere.it/index.php?topic=2.msg2#post_shortcodes
 Description: Adds support for shortcodes to WP SlimStat
-Version: 1.0
+Version: 1.1
 Author: Camu
 Author URI: http://www.duechiacchiere.it/
 */
@@ -57,58 +57,61 @@ class wp_slimstat_shortcodes {
 		$temp_array = array();
 		
 		switch($_label){
-			case 'count_bots';
+			case 'count_all_visitors':
+				$result = $wp_slimstat_view->count_all_visitors();
+				break;
+			case 'count_bots':
 				$result = $wp_slimstat_view->count_bots();
 				break;
-			case 'count_direct_visits';
+			case 'count_direct_visits':
 				$result = $wp_slimstat_view->count_direct_visits();
 				break;
-			case 'count_exit_pages';
+			case 'count_exit_pages':
 				$result = $wp_slimstat_view->count_exit_pages();
 				break;
-			case 'count_new_visitors';
+			case 'count_new_visitors':
 				$result = $wp_slimstat_view->count_new_visitors();
 				break;
-			case 'count_pages_referred';
+			case 'count_pages_referred':
 				$result = $wp_slimstat_view->count_pages_referred();
 				break;
-			case 'count_raw_data';
+			case 'count_raw_data':
 				$result = $wp_slimstat_view->count_raw_data();
 				break;
-			case 'count_recent_404_pages';
+			case 'count_recent_404_pages':
 				$result = $wp_slimstat_view->count_recent_404_pages();
 				break;
-			case 'count_recent_browsers';
+			case 'count_recent_browsers':
 				$result = $wp_slimstat_view->count_recent_browsers();
 				break;
-			case 'count_referred_from_internal';
+			case 'count_referred_from_internal':
 				$result = $wp_slimstat_view->count_referred_from_internal();
 				break;
-			case 'count_referers';
+			case 'count_referers':
 				$result = $wp_slimstat_view->count_referers();
 				break;
-			case 'count_search_engines';
+			case 'count_search_engines':
 				$result = $wp_slimstat_view->count_search_engines();
 				break;
-			case 'count_total_pageviews';
+			case 'count_total_pageviews':
 				$result = $wp_slimstat_view->count_total_pageviews();
 				break;
-			case 'count_unique_ips';
+			case 'count_unique_ips':
 				$result = $wp_slimstat_view->count_unique_ips();
 				break;	
-			case 'count_unique_referers';
+			case 'count_unique_referers':
 				$result = $wp_slimstat_view->count_unique_referers();
 				break;
-			case 'get_browsers';
+			case 'get_browsers':
 				$temp_array = $wp_slimstat_view->get_browsers();
 				foreach($temp_array as $a_row){
 					$result .= "<li>{$a_row['browser']} <span class='slimstat-second-column'>{$a_row['version']}</span> <span class='slimstat-third-column'>{$a_row['count']}</span></li>\n";
 				}
 				break;
-			case 'get_data_size';
+			case 'get_data_size':
 				$result = $wp_slimstat_view->get_data_size();
 				break;
-			case 'get_details_recent_visits';
+			case 'get_details_recent_visits':
 				$temp_array = $wp_slimstat_view->get_details_recent_visits();
 				foreach($temp_array as $a_row){
 					$platform_translated = __($a_row['platform'],'countries-languages');
@@ -124,13 +127,13 @@ class wp_slimstat_shortcodes {
 						<span class='slimstat-nineth-column'>{$a_row['customdatetime']}</span></li>\n";
 				}
 				break;
-			case 'get_other_referers';
+			case 'get_other_referers':
 				$temp_array = $wp_slimstat_view->get_other_referers();
 				foreach($temp_array as $a_row){
 					$result .= "<li>{$a_row['domain']} <span class='slimstat-second-column'>{$a_row['referer']}</span> <span class='slimstat-third-column'>{$a_row['count']}</span></li>\n";
 				}
 				break;
-			case 'get_raw_data';
+			case 'get_raw_data':
 				$temp_array = $wp_slimstat_view->get_raw_data();
 				foreach($temp_array as $a_row){
 					$platform_translated = __($a_row['platform'],'countries-languages');
@@ -147,7 +150,7 @@ class wp_slimstat_shortcodes {
 						<span class='slimstat-tenth-column'>{$a_row['customdatetime']}</span></li>\n";
 				}
 				break;
-			case 'get_recent_404_pages';
+			case 'get_recent_404_pages':
 				$temp_array = $wp_slimstat_view->get_recent_404_pages();
 				foreach($temp_array as $a_row){
 					$language_translated = __('l-'.$a_row['language'],'countries-languages');
@@ -159,14 +162,14 @@ class wp_slimstat_shortcodes {
 						<span class='slimstat-sixth-column'>{$a_row['customdatetime']}</span></li>\n";
 				}
 				break;
-			case 'get_recent_bouncing_pages';
+			case 'get_recent_bouncing_pages':
 				$temp_array = $wp_slimstat_view->get_recent_bouncing_pages();
 				foreach($temp_array as $a_row){
 					$result .= "<li>{$a_row['resource']} <span class='slimstat-second-column'>{$a_row['domain']}</span> 
 						<span class='slimstat-third-column'>{$a_row['customdatetime']}</span></li>\n";
 				}
 				break;
-			case 'get_recent_browsers';
+			case 'get_recent_browsers':
 				$temp_array = $wp_slimstat_view->get_recent_browsers();
 				foreach($temp_array as $a_row){
 					$result .= "<li>{$a_row['browser']} <span class='slimstat-second-column'>{$a_row['version']}</span> 
@@ -176,19 +179,19 @@ class wp_slimstat_shortcodes {
 						<span class='slimstat-sixth-column'>{$a_row['customdatetime']}</span></li>\n";
 				}
 				break;
-			case 'get_recent_downloads';
+			case 'get_recent_downloads':
 				$temp_array = $wp_slimstat_view->get_recent_downloads();
 				foreach($temp_array as $a_row){
 					$result .= "<li>{$a_row['outbound_resource']} <span class='slimstat-second-column'>{$a_row['customdatetime']}</span></li>\n";
 				}
 				break;
-			case 'get_recent_internal_searches';
+			case 'get_recent_internal_searches':
 				$temp_array = $wp_slimstat_view->get_recent_internal_searches();
 				foreach($temp_array as $a_row){
 					$result .= "<li>{$a_row['searchterms']} <span class='slimstat-second-column'>{$a_row['customdatetime']}</span></li>\n";
 				}
 				break;	
-			case 'get_recent_keywords_pages';
+			case 'get_recent_keywords_pages':
 				$temp_array = $wp_slimstat_view->get_recent_keywords_pages();
 				foreach($temp_array as $a_row){
 					$result .= "<li>{$a_row['searchterms']} <span class='slimstat-second-column'>{$a_row['resource']}</span> 
@@ -196,7 +199,7 @@ class wp_slimstat_shortcodes {
 						<span class='slimstat-fourth-column'>{$a_row['referer']}</span></li>\n";
 				}
 				break;
-			case 'get_recent_outbound';
+			case 'get_recent_outbound':
 				$temp_array = $wp_slimstat_view->get_recent_outbound();
 				foreach($temp_array as $a_row){
 					$result .= "<li>{$a_row['long_outbound']} <span class='slimstat-second-column'>{$a_row['resource']}</span> 
@@ -204,7 +207,7 @@ class wp_slimstat_shortcodes {
 						<span class='slimstat-fourth-column'>{$a_row['searchterms']}</span></li>\n";
 				}
 				break;
-			case 'get_top_browsers_by_operating_system';
+			case 'get_top_browsers_by_operating_system':
 				$temp_array = $wp_slimstat_view->get_top_browsers_by_operating_system();
 				foreach($temp_array as $a_row){
 					$platform_translated = __($a_row['platform'],'countries-languages');
@@ -213,26 +216,26 @@ class wp_slimstat_shortcodes {
 						<span class='slimstat-fourth-column'>{$a_row['count']}</span></li>\n";
 				}
 				break;
-			case 'get_top_exit_pages';
+			case 'get_top_exit_pages':
 				$temp_array = $wp_slimstat_view->get_top_exit_pages();
 				foreach($temp_array as $a_row){
 					$result .= "<li>{$a_row['resource']} <span class='slimstat-second-column'>{$a_row['count']}</span></li>\n";
 				}
 				break;
-			case 'get_top_operating_systems';
+			case 'get_top_operating_systems':
 				$temp_array = $wp_slimstat_view->get_top_operating_systems();
 				foreach($temp_array as $a_row){
 					$platform_translated = __($a_row['platform'],'countries-languages');
 					$result .= "<li>$platform_translated <span class='slimstat-second-column'>{$a_row['count']}</span></li>\n";
 				}
 				break;
-			case 'get_top_screenres';
+			case 'get_top_screenres':
 				$temp_array = $wp_slimstat_view->get_top_screenres();
 				foreach($temp_array as $a_row){
 					$result .= "<li>{$a_row['resolution']} <span class='slimstat-second-column'>{$a_row['count']}</span></li>\n";
 				}
 				break;
-			case 'get_top_search_engines';
+			case 'get_top_search_engines':
 				$temp_array = $wp_slimstat_view->get_top_search_engines();
 				foreach($temp_array as $a_row){
 					$result .= "<li>{$a_row['domain']} <span class='slimstat-second-column'>{$a_row['count']}</span></li>\n";
