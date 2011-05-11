@@ -1,10 +1,10 @@
 === WP SlimStat Shortcodes ===
 Contributors: coolmann
-Donate link: http://www.duechiacchiere.it/wp-slimstat
+Donate link: Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=Z732JS7KQ6RRL&lc=US&item_name=WP%20SlimStat&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted
 Tags: analytics, statistics, slimstat, shortcode, tracking, stats, maxmind, fusion charts
 Requires at least: 2.9.2
-Tested up to: 3.1
-Stable tag: 1.1
+Tested up to: 3.2
+Stable tag: 1.2
 
 == Description ==
 This plugin is an extension for [WP SlimStat](http://wordpress.org/extend/plugins/wp-slimstat/), my plugin for tracking hits, visitors,
@@ -14,7 +14,7 @@ to do this. This way only people who really need this feature, will have to add 
 to their box, while others will continue enjoying a lightweight and fast statistics plugin. 
 
 ## Requirements
-* WP SlimStat 2.0.8 or higher
+* WP SlimStat 2.4 or higher
 
 == Installation ==
 
@@ -24,6 +24,9 @@ to their box, while others will continue enjoying a lightweight and fast statist
 6. Show your appreciation! Tell your friends you are using WP SlimStat Shortcodes, write an article about it!
 
 == Changelog ==
+
+= 1.2 =
+* Now working with WP SlimStat 2.4 (new `wp-slimstat-view` library)
 
 = 1.1 =
 * Bug fixing
