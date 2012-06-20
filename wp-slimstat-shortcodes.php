@@ -1,281 +1,174 @@
 <?php
 /*
 Plugin Name: WP SlimStat ShortCodes
-Plugin URI: http://lab.duechiacchiere.it/index.php?topic=2.msg2#post_shortcodes
+Plugin URI: http://wordpress.org/extend/plugins/wp-slimstat-shortcodes/
 Description: Adds support for shortcodes to WP SlimStat
-Version: 1.2
+Version: 2.0
 Author: Camu
 Author URI: http://www.duechiacchiere.it/
 */
 
-// Avoid direct access to this piece of code
-if (__FILE__ == $_SERVER['SCRIPT_FILENAME'] ) {
-  header('Location: /');
-  exit;
-}
-
-// Load localization strings
-load_plugin_textdomain('countries-languages', WP_PLUGIN_DIR .'/wp-slimstat/lang', '/wp-slimstat/lang');
-
-// We rely on WP SlimStat Views Library
-if (file_exists(WP_PLUGIN_DIR."/wp-slimstat/view/wp-slimstat-view.php"))
-	require_once(WP_PLUGIN_DIR."/wp-slimstat/view/wp-slimstat-view.php");
-else
-	return false;
-
-class wp_slimstat_shortcodes {
+class wp_slimstat_shortcodes{
 
 	/**
-	 * Constructor -- Sets things up.
+	 * Attaches functions to hooks
 	 */
-	public function __construct() {
-		$this->list_shortcodes = array(
-			
-		);
-		
-		// These filter replace the metatag with the actual HTML code
-		add_filter('the_content', array( &$this,'replace_shortcodes') );
-		add_filter('widget_text', array( &$this,'replace_shortcodes') );
+	public static function init() {
+		if (class_exists('wp_slimstat')){
+			// These filters replace the metatag with the actual HTML code
+			add_filter('the_content', array(__CLASS__, 'slimstat_shortcode'), 15);
+			add_filter('widget_text', array(__CLASS__, 'slimstat_shortcode'), 15);
+			add_shortcode('slimstat', array(__CLASS__, 'slimstat_shortcode'), 15);
+		}
 	}
-	// end __construct
+	// end init
 
 	/**
 	 * Retrieves the information from the database
 	 */
-	private function _generate_metrics($_label = '', $_filters = ''){		
-		if (empty($_label)) return '';
-		
-		global $wpdb;
-		
-		// Reset MySQL timezone settings, our dates and times are recorded using WP settings
-		$wpdb->query("SET @@session.time_zone = '+00:00'");
-		
-		if (is_array($_filters) && !empty($_filters))
-			$wp_slimstat_view = new wp_slimstat_view($_filters);
-		else 
-			$wp_slimstat_view = new wp_slimstat_view();
-		
-		$result = '';
-		$temp_array = array();
-		
-		switch($_label){
-			case 'count_all_visitors':
-				$result = $wp_slimstat_view->count_records('t1.visit_id > 0');
-				break;
-			case 'count_bots':
-				$result = $wp_slimstat_view->count_records('visit_id = 0');
-				break;
-			case 'count_direct_visits':
-				$wp_slimstat_view->count_records("domain = ''", "DISTINCT id");
-				break;
-			case 'count_exit_pages':
-				$result = $wp_slimstat_view->count_exit_pages();
-				break;
-			case 'count_new_visitors':
-				$result = $wp_slimstat_view->count_new_visitors();
-				break;
-			case 'count_pages_referred':
-				$result = $wp_slimstat_view->count_records("domain <> ''", "DISTINCT resource");
-				break;
-			case 'count_raw_data':
-				$result = $wp_slimstat_view->count_records('1=1', '*');
-				break;
-			case 'count_recent_404_pages':
-				$result = $wp_slimstat_view->count_records("t1.resource LIKE '[404]%'", "DISTINCT t1.resource");
-				break;
-			case 'count_recent_browsers':
-				$result = $wp_slimstat_view->count_records("tb.browser <> ''", "DISTINCT tb.browser");
-				break;
-			case 'count_referred_from_internal':
-				$result = $wp_slimstat_view->count_records("domain = '{$_SERVER['SERVER_NAME']}'", "DISTINCT resource");
-				break;
-			case 'count_referers':
-				$result = $wp_slimstat_view->count_records("domain <> '{$_SERVER['SERVER_NAME']}' AND domain <> ''", "domain");
-				break;
-			case 'count_search_engines':
-				$result = $wp_slimstat_view->count_records("searchterms <> '' AND domain <> '{$_SERVER['SERVER_NAME']}' AND domain <> ''", "DISTINCT id");
-				break;
-			case 'count_total_pageviews':
-				$result = $wp_slimstat_view->count_records('1=1', '*', false);
-				break;
-			case 'count_unique_ips':
-				$result = $wp_slimstat_view->count_records('1=1', 'DISTINCT ip');
-				break;	
-			case 'count_unique_referers':
-				$result =  $wp_slimstat_view->count_records("domain <> '{$_SERVER['SERVER_NAME']}' AND domain <> ''", "DISTINCT domain");
-				break;
-			case 'get_browsers':
-				$temp_array = $wp_slimstat_view->get_top('tb.browser, tb.version', '', "tb.browser <> ''", 'browsers');
-				foreach($temp_array as $a_row){
-					$result .= "<li>{$a_row['browser']} <span class='slimstat-second-column'>{$a_row['version']}</span> <span class='slimstat-third-column'>{$a_row['count']}</span></li>\n";
+	protected function _get_results($_attr = array()){
+		// Optional fields and other variables are defined to avoid PHP warnings
+		$join_tables = '';
+		$table_identifier = wp_slimstat_db::get_table_identifier($_attr['w']);
+		if ($table_identifier != 't1.'){
+			$join_tables = $table_identifier.'*,';
+		}
+		if (!isset($_attr['lf'])) $_attr['lf'] = '';
+		if (!isset($_attr['lc'])){
+			$_attr['lc'] = array($_attr['w']);
+		}
+		elseif ($_attr['lc'] != '*'){
+			$_attr['lc'] = explode(',', $_attr['lc']);
+			foreach($_attr['lc'] as $a_column){
+				$table_identifier = wp_slimstat_db::get_table_identifier($a_column);
+				if ($table_identifier != 't1.' && strpos($join_tables, $table_identifier.'*') === false){
+					$join_tables .= $table_identifier.'*,';
 				}
+			}
+		}
+		$join_tables = substr($join_tables, 0, -1);
+
+		if (!isset($_attr['s'])) $_attr['s'] = ', ';
+
+		// Load locales
+		load_plugin_textdomain('countries-languages', WP_PLUGIN_DIR .'/wp-slimstat/admin/lang', '/wp-slimstat/lang');
+
+		// If a local translation for countries and languages does not exist, use English
+		if (!isset($l10n['countries-languages'])){
+			load_textdomain('countries-languages', WP_PLUGIN_DIR .'/wp-slimstat/admin/lang/countries-languages-en_US.mo');
+		}
+
+		$content = '';
+		switch($_attr['f']){
+			// Custom SQL: use the lf param to retrieve the data; no syntax check is done!
+			case 'custom':
+				if (!empty($_attr['lf']))
+					return $GLOBALS['wpdb']->query($_attr['lf']);
 				break;
-			case 'get_data_size':
-				$result = $wp_slimstat_view->get_data_size();
-				break;
-			case 'get_details_recent_visits':
-				$temp_array = $wp_slimstat_view->get_recent('t1.id', 't1.ip, t1.language, t1.resource, t1.searchterms, t1.visit_id, t1.country, t1.domain, t1.referer, tb.browser, tb.version, tb.platform', 't1.visit_id > 0', 'browsers');
-				foreach($temp_array as $a_row){
-					$a_row['platform'] = __($a_row['platform'],'countries-languages');
-					$a_row['language'] = __('l-'.$a_row['language'],'countries-languages');
-					$a_row['country'] = __('c-'.$a_row['country'],'countries-languages');
-					$a_row['dt'] = date_i18n($wp_slimstat_view->date_time_format, $a_row['dt']);
-					$result .= "<li>{$a_row['ip']} <span class='slimstat-second-column'>{$a_row['language']}</span> 
-						<span class='slimstat-third-column'>{$a_row['country']}</span>
-						<span class='slimstat-fourth-column'>{$a_row['domain']}{$a_row['referer']}</span>
-						<span class='slimstat-fifth-column'>{$a_row['resource']}</span>
-						<span class='slimstat-sixth-column'>{$a_row['browser']} {$a_row['version']}</span>
-						<span class='slimstat-seventh-column'>{$a_row['searchterms']}</span>
-						<span class='slimstat-eighth-column'>{$a_row['platform']}</span>
-						<span class='slimstat-nineth-column'>{$a_row['dt']}</span></li>\n";
+			case 'recent':
+			case 'popular':
+			case 'count':
+				// Avoid PHP warnings in strict mode
+				$custom_where = '';
+
+				if (strpos($_attr['lf'], 'WHERE:') !== false){
+					$custom_where = substr($_attr['lf'], 6);
+					wp_slimstat_db::init();
 				}
-				break;
-			case 'get_other_referers':
-				$temp_array = $wp_slimstat_view->get_top('t1.domain', 't1.referer', "searchterms = '' AND domain <> '{$_SERVER['SERVER_NAME']}' AND domain <> ''");
-				foreach($temp_array as $a_row){
-					$result .= "<li>{$a_row['domain']} <span class='slimstat-second-column'>{$a_row['referer']}</span> <span class='slimstat-third-column'>{$a_row['count']}</span></li>\n";
+				else{
+					wp_slimstat_db::init($_attr['lf']);
+				}	
+
+				if ($_attr['f'] == 'count')
+					return wp_slimstat_db::count_records($custom_where, '*', true, $join_tables);
+
+				$_attr['f'] = 'get_'.$_attr['f'];
+				$results = wp_slimstat_db::$_attr['f'](wp_slimstat_db::get_table_identifier($_attr['w']).$_attr['w'], $custom_where, $join_tables);
+
+				// Format results
+				if (empty($results)) return $content;
+
+				// What columns to include?
+				if ($_attr['lc'] == '*')
+					$_attr['lc'] = array_keys($results[0]);
+
+				$home_url = get_home_url();
+				foreach($results as $a_result){
+					$content .= '<li>';
+					foreach($_attr['lc'] as $id_column => $a_column){
+						$content .= "<span class='col-$id_column'>";
+						switch($a_column){
+							case 'post_link':
+								$post_id = url_to_postid(strtok($a_result['resource'], '?'));
+								if ($post_id > 0)
+									$content .= "<a href='{$a_result['resource']}'>".get_the_title($post_id).'</a>';
+								else 
+									$content .= strtok($a_result['resource'], '?');
+								break;
+							case 'dt':
+								$content .= date_i18n(wp_slimstat_db::$date_time_format, $a_result['dt']);
+								break;
+							case 'hostname':
+								$content .= gethostbyaddr($a_result['ip']);
+								break;
+							case 'ip':
+								$content .= long2ip($a_result['ip']);
+								break;
+							default:
+								$content .= $a_result[$a_column];
+								break;
+						}
+						$content .= $_attr['s'];
+					}
+					$content = substr($content, 0, strrpos($content, $_attr['s'])).'</li>';
 				}
-				break;
-			case 'get_raw_data':
-				$temp_array = $wp_slimstat_view->get_recent('t1.resource', 't1.ip, t1.user, t1.language, t1.searchterms, t1.visit_id, t1.country, t1.domain, t1.referer, tb.browser, tb.version, tb.platform', '', 'browsers');
-				foreach($temp_array as $a_row){
-					$a_row['platform'] = __($a_row['platform'],'countries-languages');
-					$a_row['language'] = __('l-'.$a_row['language'],'countries-languages');
-					$a_row['country'] = __('c-'.$a_row['country'],'countries-languages');
-					$a_row['dt'] = date_i18n($wp_slimstat_view->date_time_format, $a_row['dt']);
-					$result .= "<li>{$a_row['ip']} <span class='slimstat-second-column'>{$a_row['language']}</span> 
-						<span class='slimstat-third-column'>{$a_row['country']}</span>
-						<span class='slimstat-fourth-column'>{$a_row['domain']}{$a_row['referer']}</span>
-						<span class='slimstat-fifth-column'>{$a_row['resource']}</span>
-						<span class='slimstat-sixth-column'>{$a_row['browser']} {$a_row['version']}</span>
-						<span class='slimstat-seventh-column'>{$a_row['searchterms']}</span>
-						<span class='slimstat-eighth-column'>{$a_row['platform']}</span>
-						<span class='slimstat-nineth-column'>{$a_row['dt']}</span></li>\n";
-				}
-				break;
-			case 'get_recent_404_pages':
-				$temp_array = $wp_slimstat_view->get_recent('t1.resource', 't1.ip, t1.language, t1.country, t1.domain, t1.resource', "resource LIKE '[404]%'");
-				foreach($temp_array as $a_row){
-					$a_row['language'] = __('l-'.$a_row['language'],'countries-languages');
-					$a_row['country'] = __('c-'.$a_row['country'],'countries-languages');
-					$a_row['dt'] = date_i18n($wp_slimstat_view->date_time_format, $a_row['dt']);
-					$result .= "<li>{$a_row['ip']} <span class='slimstat-second-column'>{$a_row['language']}</span> 
-						<span class='slimstat-third-column'>{$a_row['country']}</span>
-						<span class='slimstat-fourth-column'>{$a_row['domain']}</span>
-						<span class='slimstat-fifth-column'>{$a_row['resource']}</span>
-						<span class='slimstat-sixth-column'>{$a_row['dt']}</span></li>\n";
-				}
-				break;
-			case 'get_recent_bouncing_pages':
-				$temp_array = $wp_slimstat_view->get_recent('t1.resource', 't1.domain', '', '', 'HAVING COUNT(visit_id) = 1');
-				foreach($temp_array as $a_row){
-					$a_row['dt'] = date_i18n($wp_slimstat_view->date_time_format, $a_row['dt']);
-					$result .= "<li>{$a_row['resource']} <span class='slimstat-second-column'>{$a_row['domain']}</span> 
-						<span class='slimstat-third-column'>{$a_row['dt']}</span></li>\n";
-				}
-				break;
-			case 'get_recent_downloads':
-				$temp_array = $wp_slimstat_view->get_recent_outbound(1);
-				foreach($temp_array as $a_row){
-					$a_row['dt'] = date_i18n($wp_slimstat_view->date_time_format, $a_row['dt']);
-					$result .= "<li>{$a_row['outbound_resource']} <span class='slimstat-second-column'>{$a_row['dt']}</span></li>\n";
-				}
-				break;
-			case 'get_recent_internal_searches':
-				$temp_array =  $wp_slimstat_view->get_recent('t1.searchterms', '', "(resource = '__l_s__' OR resource = '')");
-				foreach($temp_array as $a_row){
-					$a_row['dt'] = date_i18n($wp_slimstat_view->date_time_format, $a_row['dt']);
-					$result .= "<li>{$a_row['searchterms']} <span class='slimstat-second-column'>{$a_row['dt']}</span></li>\n";
-				}
-				break;	
-			case 'get_recent_keywords_pages':
-				$temp_array = $wp_slimstat_view->get_recent('t1.searchterms', 't1.resource, t1.domain, t1.referer');
-				foreach($temp_array as $a_row){
-					$result .= "<li>{$a_row['searchterms']} <span class='slimstat-second-column'>{$a_row['resource']}</span> 
-						<span class='slimstat-third-column'>{$a_row['domain']}</span>
-						<span class='slimstat-fourth-column'>{$a_row['referer']}</span></li>\n";
-				}
-				break;
-			case 'get_recent_outbound':
-				$temp_array = $wp_slimstat_view->get_recent_outbound(0);
-				foreach($temp_array as $a_row){
-					$result .= "<li>{$a_row['outbound_resource']} <span class='slimstat-second-column'>{$a_row['resource']}</span> 
-						<span class='slimstat-third-column'>{$a_row['ip']}</span></li>\n";
-				}
-				break;
-			case 'get_top_browsers_by_operating_system':
-				$temp_array = $wp_slimstat_view->get_top('tb.browser, tb.version, tb.platform', '', "t1.visit_id > 0", 'browsers');
-				foreach($temp_array as $a_row){
-					$a_row['platform'] = __($a_row['platform'],'countries-languages');
-					$result .= "<li>{$a_row['browser']} <span class='slimstat-second-column'>{$a_row['version']}</span> 
-						<span class='slimstat-third-column'>{$a_row['platform']}</span>
-						<span class='slimstat-fourth-column'>{$a_row['count']}</span></li>\n";
-				}
-				break;
-			case 'get_top_exit_pages':
-				$temp_array = $wp_slimstat_view->get_top('t1.resource', '', "visit_id > 0 AND resource <> '' AND resource <> '__l_s__'");
-				foreach($temp_array as $a_row){
-					$result .= "<li>{$a_row['resource']} <span class='slimstat-second-column'>{$a_row['count']}</span></li>\n";
-				}
-				break;
-			case 'get_top_operating_systems':
-				$temp_array = $wp_slimstat_view->get_top('tb.platform', '', '', 'browsers');
-				foreach($temp_array as $a_row){
-					$a_row['platform'] = __($a_row['platform'],'countries-languages');
-					$result .= "<li>{$a_row['platform']} <span class='slimstat-second-column'>{$a_row['count']}</span></li>\n";
-				}
-				break;
-			case 'get_top_screenres':
-				$temp_array = $wp_slimstat_view->get_top('tss.resolution', '', '', 'screenres');
-				foreach($temp_array as $a_row){
-					$result .= "<li>{$a_row['resolution']} <span class='slimstat-second-column'>{$a_row['count']}</span></li>\n";
-				}
-				break;
-			case 'get_top_search_engines':
-				$temp_array = $wp_slimstat_view->get_top('t1.domain', '', "searchterms <> '' AND domain <> '{$_SERVER['SERVER_NAME']}'");
-				foreach($temp_array as $a_row){
-					$result .= "<li>{$a_row['domain']} <span class='slimstat-second-column'>{$a_row['count']}</span></li>\n";
-				}
+				return "<ul class='slimstat-shortcode {$_attr['f']}-{$_attr['w']}'>$content</ul>";
 				break;
 			default:
-				break;
 		}
-		
-		return $result;
 	}
-	// end _generate_metrics
-	
-	// Function: replace_shortcodes
-	// Description: Updates the content of a post to replace the placeholder with the actual ad
-	// Input: content to manipulate
-	// Output: updated content
-	public function replace_shortcodes($_content){
+	// end _get_results
 
-		$new_content = $_content;
-		$filters = array();
-		
-		// First of all, let's see if the user has defined any filters
-		preg_match_all("/<!--slimstat-filter:([a-z\_]*):([a-z\ ]*):(.*)-->/U", $_content, $matches);
-		
-		foreach($matches[1] as $a_filter_idx => $a_filter){
-			$filters[$a_filter.'-op'] = $matches[2][$a_filter_idx];
-			$filters[$a_filter] = $matches[3][$a_filter_idx];
-			$new_content = str_replace($matches[0][$a_filter_idx], '', $new_content);
+	/**
+	 * Handles the shortcode 
+	 */
+	public static function slimstat_shortcode($_content = ''){
+		// Include the library to retrieve the information from the database
+		if (file_exists(WP_PLUGIN_DIR."/wp-slimstat/admin/view/wp-slimstat-db.php"))
+			include_once(WP_PLUGIN_DIR."/wp-slimstat/admin/view/wp-slimstat-db.php");
+
+		// This function can be associated to both the new shortcode syntax with square brackets, or the old one using HTML comments
+		if (is_array($_content)){
+			// Look for required fields
+			if (empty($_content['f']) || empty($_content['w'])){
+				return '<!-- slimstat shortcode error: missing parameter -->';
+			}
+			else{
+				// Get the data and replace the placeholder
+				return self::_get_results($_content);
+			}
 		}
-		
-		// Let's look for simple shortcodes (no filters)
-		preg_match_all("/<!--slimstat:([0-9a-z\_]*)-->/U", $_content, $matches);
-		foreach($matches[1] as $a_label_idx => $a_label){
-			$metrics = $this->_generate_metrics($a_label, $filters);
-			$new_content = str_replace($matches[0][$a_label_idx], $metrics, $new_content);
+
+		// Find the shortcodes and process them
+		preg_match_all('/<!--slimstat (.+)-->/U', $_content, $matches);
+
+		foreach($matches[1] as $a_idx => $a_shortcode){
+			$attr = shortcode_parse_atts($a_shortcode);
+
+			// Look for required fields
+			if (empty($attr['f']) || empty($attr['w'])){
+				$_content = str_replace($matches[0][$a_idx], '<!-- slimstat shortcode error: missing parameter -->', $_content);
+			}
+			else{
+				// Get the data and replace the placeholder
+				$_content = str_replace($matches[0][$a_idx], self::_get_results($attr), $_content);
+			}
 		}
-	
-		return $new_content;
+		return $_content;
 	}
-	// end replace_shortcodes
+	// end slimstat_shortcode
 }
 // end of class declaration
 
-$wp_slimstat_shortcodes = new wp_slimstat_shortcodes();
-
-?>
+// Bootstrap
+if (function_exists('add_action')) add_action('init', array('wp_slimstat_shortcodes', 'init'), 5);
