@@ -3,8 +3,8 @@ Contributors: coolmann
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=Z732JS7KQ6RRL&lc=US&item_name=WP%20SlimStat&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted
 Tags: chart, analytics, visitors, users, spy, shortstat, tracking, reports, seo, referers, analyze, wassup, geolocation, online users, spider, tracker, pageviews, world map, stats, maxmind, flot, stalker, statistics, google+, monitor, seo
 Requires at least: 3.1
-Tested up to: 3.4
-Stable tag: 2.0
+Tested up to: 3.5
+Stable tag: 2.1
 
 == Description ==
 An extension for WP SlimStat to display metrics on public-facing pages and widgets
@@ -33,13 +33,8 @@ have to do is add a snippet of `code` to the page where you want the stats to be
 A [shortcode](http://codex.wordpress.org/Shortcode_API) is sort of a placeholder: a special string that will be replaced by dynamic content.
 
 = What do shortcodes look like? =
-They use the following standard format: 
 
-`[slimstat f='FUNC' w='WHAT_COLUMN' lf='FILTERS' lc='COLUMNS' s='SEP']` 
-
-or, for backward compatibility, the one with HTML comments:
-
-`<!--slimstat f='FUNC' w='WHAT_COLUMN' lf='FILTERS' lc='COLUMNS' s='SEP'-->` 
+[slimstat f='FUNC' w='WHAT_COLUMN' lf='FILTERS' lc='COLUMNS' s='SEP']
 
 where
 
@@ -49,8 +44,9 @@ where
 * `lc` [optional, default: WHAT_COLUMN] tells the plugin what data to return; use * for all the columns (defaults to the column specified in `w`)
 * `s` [optional] sets the character or string used to "separate" each piece of information in a row (defaults to `<span class='slimstat-item-separator'>,</span>`)
 
-= Quick start: frequently used codes =
+= Frequently used codes =
 
+* Count all pageviews from the beginning: `[slimstat f='count-all' w='*']`
 * Popular pages (this month): `[slimstat f='popular' w='resource' lf='content_type equals post' lc='post_link,count']`
 * Recent searches: `[slimstat f='recent' w='searchterms']`
 * Popular searches this year so far: `[slimstat f='popular' w='searchterms' lf='day equals 1|month equals 1|interval equals -1']`
@@ -58,7 +54,7 @@ where
 
 = Available functions =
 
-* `count` returns a number
+* `count` and `count-all` return a number
 * `recent` and `popular` return a bulleted list of elements
 * `custom`, used along with `filterby` to run a custom SQL query - i.e. `filterby='SELECT * FROM wp_slim_stats t1...'`; it returns a list of elements
 
@@ -137,15 +133,29 @@ Do you want to target a specific language? What about listing the 20 most recent
 
 `[slimstat f='recent' w='ip' lf='content_type equals home|language equals zh-cn|limit_results equals 20']`
 
-Do you need just to count how many pageviews have been generated during the current month?
+Do you need just to count how many pageviews have been generated during the current month? (by default all shortcodes use the current month as date range)
+
+`[slimstat f='count' w='*']`
+
+Maybe this year?
+
+`[slimstat f='count' w='*' lf='strtotime equals 1 January|interval equals -1']`
+
+The first 5 days of January?
+ 
+`[slimstat f='count' w='*' lf='day equals 1|month equals 1|interval equals 5']`
+
+From the beginning (all pageviews recorded so far)
+
+`[slimstat f='count-all' w='*']`
+
+Unique IPs (unique visitors):
 
 `[slimstat f='count' w='ip']`
 
-Or maybe this year? Or last month? Or the first 5 days of January?
+Unique Visits this month:
 
-* `[slimstat f='count' w='ip' lf='strtotime equals 1 January|interval equals -1']`
-* `[slimstat f='count' w='ip' lf='strtotime equals last_month']`
-* `[slimstat f='count' w='ip' lf='day equals 1|month equals 1|interval equals 5']`
+`[slimstat f='count' w='visit_id']`
 
 Things can easily get fancy
 
@@ -160,6 +170,10 @@ Things can easily get fancy
 * `post_link`, returns post titles linked to their corresponding permalinks
 
 == Changelog ==
+
+= 2.1 =
+* Added: shortcode to count all pageviews recorded so far (not just the current month, thank you [Zeb](http://wordpress.org/support/topic/total-pageviews))
+* Fixed: minor bugs in interpreting certain values
 
 = 2.0 =
 * Code has been almost completely rewritten

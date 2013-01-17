@@ -3,7 +3,7 @@
 Plugin Name: WP SlimStat ShortCodes
 Plugin URI: http://wordpress.org/extend/plugins/wp-slimstat-shortcodes/
 Description: Adds support for shortcodes to WP SlimStat
-Version: 2.0
+Version: 2.1
 Author: Camu
 Author URI: http://www.duechiacchiere.it/
 */
@@ -16,9 +16,10 @@ class wp_slimstat_shortcodes{
 	public static function init() {
 		if (class_exists('wp_slimstat')){
 			// These filters replace the metatag with the actual HTML code
-			add_filter('the_content', array(__CLASS__, 'slimstat_shortcode'), 15);
-			add_filter('widget_text', array(__CLASS__, 'slimstat_shortcode'), 15);
 			add_shortcode('slimstat', array(__CLASS__, 'slimstat_shortcode'), 15);
+			
+			// TODO: display chart on site
+			// add_shortcode('slimstat-chart', array(__CLASS__, 'slimstat_chart'), 15);
 		}
 	}
 	// end init
@@ -68,11 +69,12 @@ class wp_slimstat_shortcodes{
 			case 'recent':
 			case 'popular':
 			case 'count':
+			case 'count-all':
 				// Avoid PHP warnings in strict mode
 				$custom_where = '';
 
 				if (strpos($_attr['lf'], 'WHERE:') !== false){
-					$custom_where = substr($_attr['lf'], 6);
+					$custom_where = html_entity_decode(substr($_attr['lf'], 6), ENT_QUOTES, 'UTF-8');
 					wp_slimstat_db::init();
 				}
 				else{
@@ -80,7 +82,10 @@ class wp_slimstat_shortcodes{
 				}	
 
 				if ($_attr['f'] == 'count')
-					return wp_slimstat_db::count_records($custom_where, '*', true, $join_tables);
+					return wp_slimstat_db::count_records($custom_where, $_attr['w'], true, $join_tables);
+					
+				if ($_attr['f'] == 'count-all')
+					return wp_slimstat_db::count_records($custom_where, $_attr['w'], true, $join_tables, false);
 
 				$_attr['f'] = 'get_'.$_attr['f'];
 				$results = wp_slimstat_db::$_attr['f'](wp_slimstat_db::get_table_identifier($_attr['w']).$_attr['w'], $custom_where, $join_tables);
@@ -130,7 +135,7 @@ class wp_slimstat_shortcodes{
 	// end _get_results
 
 	/**
-	 * Handles the shortcode 
+	 * Handles the shortcode to get recent and popular data
 	 */
 	public static function slimstat_shortcode($_content = ''){
 		// Include the library to retrieve the information from the database
@@ -167,6 +172,33 @@ class wp_slimstat_shortcodes{
 		return $_content;
 	}
 	// end slimstat_shortcode
+	
+	/**
+	 * Handles the shortcode to embed the chart
+	 *
+	public static function slimstat_chart($_content = ''){
+		if (!file_exists(WP_PLUGIN_DIR."/wp-slimstat/admin/view/wp-slimstat-db.php")) return $_content;
+
+		// Include the library to retrieve the information from the database
+		include_once(WP_PLUGIN_DIR."/wp-slimstat/admin/view/wp-slimstat-db.php");
+		include_once(WP_PLUGIN_DIR."/wp-slimstat/admin/view/wp-slimstat-boxes.php");
+		
+		wp_enqueue_script('slimstat_flot', plugins_url('/wp-slimstat/admin/js/jquery.flot.min.js', dirname(__FILE__)), array('jquery'), '0.7', false);
+		wp_enqueue_script('slimstat_flot_navigate', plugins_url('/wp-slimstat/admin/js/jquery.flot.navigate.min.js', dirname(__FILE__)), array('jquery','slimstat_flot'), '0.7', false);
+		wp_enqueue_script('slimstat_admin', plugins_url('/wp-slimstat/admin/js/slimstat.admin.js', dirname(__FILE__)), array('jquery-ui-dialog'), '1.0', false);
+
+		if (!is_array($_content)) return $_content;
+		
+		wp_slimstat_db::init($_content['lf']);	
+
+		ob_start();
+		wp_slimstat_boxes::show_chart('slim_p1_01', wp_slimstat_db::extract_data_for_chart('COUNT(t1.ip)', 'COUNT(DISTINCT(t1.ip))'), array(__('Pageviews','wp-slimstat-view'), __('Unique IPs','wp-slimstat-view')));
+		$chart_html = ob_get_contents();
+		ob_end_clean();
+
+		return str_replace('<div id="chart-placeholder">', '<div id="chart-placeholder" style="width:300px;height:300px">', $chart_html);
+	}
+	// end slimstat_shortcode */
 }
 // end of class declaration
 
