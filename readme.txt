@@ -3,8 +3,8 @@ Contributors: coolmann
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=Z732JS7KQ6RRL&lc=US&item_name=WP%20SlimStat&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted
 Tags: chart, analytics, visitors, users, spy, shortstat, tracking, reports, seo, referers, analyze, wassup, geolocation, online users, spider, tracker, pageviews, world map, stats, maxmind, flot, stalker, statistics, google+, monitor, seo
 Requires at least: 3.1
-Tested up to: 3.5
-Stable tag: 2.1
+Tested up to: 3.8
+Stable tag: 2.2
 
 == Description ==
 An extension for WP SlimStat to display metrics on public-facing pages and widgets
@@ -17,7 +17,7 @@ have to do is add a snippet of `code` to the page where you want the stats to be
 
 = Requirements =
 * Wordpress 3.1 or higher
-* [WP Slimstat 2.8+](http://wordpress.org/extend/plugins/wp-slimstat/)
+* At least [WP Slimstat 3.5](http://wordpress.org/plugins/wp-slimstat/)
 
 == Installation ==
 
@@ -170,6 +170,9 @@ Things can easily get fancy
 * `post_link`, returns post titles linked to their corresponding permalinks
 
 == Changelog ==
+
+= 2.2 =
+* Updated code to leverage the new DB Library introduced in WP SlimStat 3.5.2
 
 = 2.1 =
 * Added: shortcode to count all pageviews recorded so far (not just the current month, thank you [Zeb](http://wordpress.org/support/topic/total-pageviews))
