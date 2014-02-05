@@ -4,16 +4,15 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=Z732J
 Tags: chart, analytics, visitors, users, spy, shortstat, tracking, reports, seo, referers, analyze, wassup, geolocation, online users, spider, tracker, pageviews, world map, stats, maxmind, flot, stalker, statistics, google+, monitor, seo
 Requires at least: 3.1
 Tested up to: 3.8
-Stable tag: 2.2
+Stable tag: 2.3
 
 == Description ==
-An extension for WP SlimStat to display metrics on public-facing pages and widgets
+An extension for [WP SlimStat](http://wordpress.org/plugins/wp-slimstat/) to display your reports on pages and widgets
 
-If you have always wanted to show off a little, here's your chance: share your analytics data with your visitors, 
-in just a few easy steps. Take the power of WP SlimStat to a whole new level: create a page listing the most visited posts,
-or categories, or the most popular search terms, or the most recent. It's up to you, really. Need to filter results to
+Share your analytics data with your visitors, in just a few easy steps. Take WP SlimStat to the next level: list the most visited posts,
+or categories, or the most popular search terms, or the most recent ones. The sky (or your DB size) is the limit! Need to filter your report for
 a specific browser? Check. Want to create a page with last year's most popular search terms from France? Check. All you
-have to do is add a snippet of `code` to the page where you want the stats to be shown, and... save.
+have to do is to add a shortcode to the page where you want the stats to be displayed, and... save.
 
 = Requirements =
 * Wordpress 3.1 or higher
@@ -171,8 +170,11 @@ Things can easily get fancy
 
 == Changelog ==
 
+= 2.3 =
+* Fixed: bug with strtotime filter related to the new DB Library (thank you, [STONE5572](http://wordpress.org/support/topic/shortcodes-not-working-39))
+
 = 2.2 =
-* Updated code to leverage the new DB Library introduced in WP SlimStat 3.5.2
+* Updated: Source code now leverages the new DB Library introduced in WP SlimStat 3.5.2
 
 = 2.1 =
 * Added: shortcode to count all pageviews recorded so far (not just the current month, thank you [Zeb](http://wordpress.org/support/topic/total-pageviews))

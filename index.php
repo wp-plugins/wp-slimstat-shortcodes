@@ -3,7 +3,7 @@
 Plugin Name: WP SlimStat ShortCodes
 Plugin URI: http://wordpress.org/plugins/wp-slimstat-shortcodes/
 Description: Adds support for shortcodes to WP SlimStat
-Version: 2.2
+Version: 2.3
 Author: Camu
 Author URI: http://slimstat.getused.to.it
 */
@@ -82,10 +82,10 @@ class wp_slimstat_shortcodes{
 				}	
 
 				if ($_attr['f'] == 'count')
-					return wp_slimstat_db::count_records($custom_where, $_attr['w'], true, $join_tables);
+					return wp_slimstat_db::count_records($custom_where, $_attr['w'], true, true, $join_tables);
 					
 				if ($_attr['f'] == 'count-all')
-					return wp_slimstat_db::count_records($custom_where, $_attr['w'], true, $join_tables, false);
+					return wp_slimstat_db::count_records($custom_where, $_attr['w'], true, false, $join_tables);
 
 				$_attr['f'] = 'get_'.$_attr['f'];
 				$results = wp_slimstat_db::$_attr['f'](wp_slimstat_db::get_table_identifier($_attr['w']).$_attr['w'], $custom_where, $join_tables);
