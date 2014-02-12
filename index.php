@@ -73,6 +73,8 @@ class wp_slimstat_shortcodes{
 				// Avoid PHP warnings in strict mode
 				$custom_where = '';
 
+				// Ampersands are encoded as HTML
+				$_attr['lf'] = str_replace('&#038;&#038;&#038;', '&&&', $_attr['lf']);
 				if (strpos($_attr['lf'], 'WHERE:') !== false){
 					$custom_where = html_entity_decode(substr($_attr['lf'], 6), ENT_QUOTES, 'UTF-8');
 					wp_slimstat_db::init();
