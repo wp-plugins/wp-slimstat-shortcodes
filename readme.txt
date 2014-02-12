@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=Z732J
 Tags: chart, analytics, visitors, users, spy, shortstat, tracking, reports, seo, referers, analyze, wassup, geolocation, online users, spider, tracker, pageviews, world map, stats, maxmind, flot, stalker, statistics, google+, monitor, seo
 Requires at least: 3.1
 Tested up to: 3.8
-Stable tag: 2.3
+Stable tag: 2.4
 
 == Description ==
 An extension for [WP SlimStat](http://wordpress.org/plugins/wp-slimstat/) to display your reports on pages and widgets
@@ -16,7 +16,7 @@ have to do is to add a shortcode to the page where you want the stats to be disp
 
 = Requirements =
 * Wordpress 3.1 or higher
-* At least [WP Slimstat 3.5](http://wordpress.org/plugins/wp-slimstat/)
+* At least [WP Slimstat 3.5.4](http://wordpress.org/plugins/wp-slimstat/)
 
 == Installation ==
 
@@ -48,7 +48,7 @@ where
 * Count all pageviews from the beginning: `[slimstat f='count-all' w='*']`
 * Popular pages (this month): `[slimstat f='popular' w='resource' lf='content_type equals post' lc='post_link,count']`
 * Recent searches: `[slimstat f='recent' w='searchterms']`
-* Popular searches this year so far: `[slimstat f='popular' w='searchterms' lf='day equals 1|month equals 1|interval equals -1']`
+* Popular searches this year so far: `[slimstat f='popular' w='searchterms' lf='day equals 1&&&month equals 1&&&interval equals -1']`
 * Most active visitors: `[slimstat f='popular' w='user' lc='user,count']`
 
 = Available functions =
@@ -115,14 +115,13 @@ Yes you can! By default shortcodes return data related to the current month, but
 * `sounds_like`
 * `is_greater_than`
 * `is_less_than`
-* `is_empty` (followed by a blank space and the # sign: searchterms is_empty #|month equals 5)
-* `is_not_empty` (followed by a blank space and the # sign: searchterms is_not_empty #|browser contains fire)
+* `is_empty` (followed by a blank space and the # sign: searchterms is_empty #&&&month equals 5)
+* `is_not_empty` (followed by a blank space and the # sign: searchterms is_not_empty #&&&browser contains fire)
 
 = How do I combine keys and values to create filters? =
-In order to simplify things, WP SlimStat Shortcodes implements a 'natural language' approach: define filters combining the various parameters, separating groups with the 'pipe' ( | ) character.
-For example, let's say you want to obtain your blog's 5 most popular posts. This is what the shortcode will look like:
+In order to simplify things, WP SlimStat Shortcodes implements a 'natural language' approach. For example, let's say you want to obtain your blog's 5 most popular posts. This is what the shortcode will look like:
 
-`[slimstat f='popular' w='resource' lf='content_type equals post|limit_results equals 5' lc='post_link,count']`
+`[slimstat f='popular' w='resource' lf='content_type equals post&&&limit_results equals 5' lc='post_link,count']`
 
 Curious about what your visitors where searching for, before landing on your blog?
 
@@ -130,7 +129,7 @@ Curious about what your visitors where searching for, before landing on your blo
 
 Do you want to target a specific language? What about listing the 20 most recent Chinese-speaking IP addresses who accessed just your homepage:
 
-`[slimstat f='recent' w='ip' lf='content_type equals home|language equals zh-cn|limit_results equals 20']`
+`[slimstat f='recent' w='ip' lf='content_type equals home&&&language equals zh-cn&&&limit_results equals 20']`
 
 Do you need just to count how many pageviews have been generated during the current month? (by default all shortcodes use the current month as date range)
 
@@ -138,11 +137,11 @@ Do you need just to count how many pageviews have been generated during the curr
 
 Maybe this year?
 
-`[slimstat f='count' w='*' lf='strtotime equals 1 January|interval equals -1']`
+`[slimstat f='count' w='*' lf='strtotime equals 1 January&&&interval equals -1']`
 
 The first 5 days of January?
  
-`[slimstat f='count' w='*' lf='day equals 1|month equals 1|interval equals 5']`
+`[slimstat f='count' w='*' lf='day equals 1&&&month equals 1&&&interval equals 5']`
 
 From the beginning (all pageviews recorded so far)
 
@@ -169,6 +168,9 @@ Things can easily get fancy
 * `post_link`, returns post titles linked to their corresponding permalinks
 
 == Changelog ==
+
+= 2.4 =
+* **Major change**: in order to avoid a conflict with a character used to define regular expressions, the SEPARATOR has changed from | to &&& (three & chars). Please make sure to update all your shortcodes accordingly!
 
 = 2.3 =
 * Fixed: bug with strtotime filter related to the new DB Library (thank you, [STONE5572](http://wordpress.org/support/topic/shortcodes-not-working-39))
