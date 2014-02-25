@@ -3,7 +3,7 @@
 Plugin Name: WP SlimStat ShortCodes
 Plugin URI: http://wordpress.org/plugins/wp-slimstat-shortcodes/
 Description: Adds support for shortcodes to WP SlimStat
-Version: 2.4
+Version: 2.4.1
 Author: Camu
 Author URI: http://slimstat.getused.to.it
 */
@@ -75,6 +75,7 @@ class wp_slimstat_shortcodes{
 
 				// Ampersands are encoded as HTML
 				$_attr['lf'] = str_replace('&#038;&#038;&#038;', '&&&', $_attr['lf']);
+				
 				if (strpos($_attr['lf'], 'WHERE:') !== false){
 					$custom_where = html_entity_decode(substr($_attr['lf'], 6), ENT_QUOTES, 'UTF-8');
 					wp_slimstat_db::init();

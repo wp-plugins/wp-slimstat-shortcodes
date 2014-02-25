@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=Z732J
 Tags: chart, analytics, visitors, users, spy, shortstat, tracking, reports, seo, referers, analyze, wassup, geolocation, online users, spider, tracker, pageviews, world map, stats, maxmind, flot, stalker, statistics, google+, monitor, seo
 Requires at least: 3.1
 Tested up to: 3.8
-Stable tag: 2.4
+Stable tag: 2.4.1
 
 == Description ==
 An extension for [WP SlimStat](http://wordpress.org/plugins/wp-slimstat/) to display your reports on pages and widgets
@@ -45,10 +45,12 @@ where
 
 = Frequently used codes =
 
+* Pageviews Today: `[slimstat f='count' lf='day equals today']`
+* Unique Human Visitors Today: `[slimstat f='count' w='ip' lf='day equals today&&&visit_id is_greater_than 0']`
+* Currently Online: `[slimstat f='count-all' w='*' lf='WHERE:NOW() - dt < 300']`
 * Count all pageviews from the beginning: `[slimstat f='count-all' w='*']`
 * Popular pages (this month): `[slimstat f='popular' w='resource' lf='content_type equals post' lc='post_link,count']`
 * Recent searches: `[slimstat f='recent' w='searchterms']`
-* Popular searches this year so far: `[slimstat f='popular' w='searchterms' lf='day equals 1&&&month equals 1&&&interval equals -1']`
 * Most active visitors: `[slimstat f='popular' w='user' lc='user,count']`
 
 = Available functions =
@@ -103,6 +105,8 @@ Yes you can! By default shortcodes return data related to the current month, but
  * if both `day` or `strtotime` are set, the default value is zero
  * if neither `day` nor `strtotime` are set, the default value is the number of days in the current month
  * you can use `-1` to indicate the number of days between the start date and today (in other words, to describe date ranges like 'Year to date', you can set `day equals 1,month equals 1,interval equals -1`)
+
+You can use natural language for day, month and year: day equals today, year equals last year, etc. The plugin will try to apply strtotime (see link here above) to your value.
 
 = What conditional operators are available? (note: words are separated by underscores, not blank spaces!) =
 
@@ -168,6 +172,9 @@ Things can easily get fancy
 * `post_link`, returns post titles linked to their corresponding permalinks
 
 == Changelog ==
+
+= 2.4.1 =
+* Added support for natural language date ranges: day equals today, year equals last year, etc. Have fun!
 
 = 2.4 =
 * **Major change**: in order to avoid a conflict with a character used to define regular expressions, the SEPARATOR has changed from | to &&& (three & chars). Please make sure to update all your shortcodes accordingly!
