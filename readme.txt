@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=Z732J
 Tags: chart, analytics, visitors, users, spy, shortstat, tracking, reports, seo, referers, analyze, wassup, geolocation, online users, spider, tracker, pageviews, world map, stats, maxmind, flot, stalker, statistics, google+, monitor, seo
 Requires at least: 3.1
 Tested up to: 3.8
-Stable tag: 2.4.1
+Stable tag: 2.4.2
 
 == Description ==
 An extension for [WP SlimStat](http://wordpress.org/plugins/wp-slimstat/) to display your reports on pages and widgets
@@ -47,7 +47,7 @@ where
 
 * Pageviews Today: `[slimstat f='count' lf='day equals today']`
 * Unique Human Visitors Today: `[slimstat f='count' w='ip' lf='day equals today&&&visit_id is_greater_than 0']`
-* Currently Online: `[slimstat f='count-all' w='*' lf='WHERE:NOW() - dt < 300']`
+* Currently Online: `[slimstat f='count-all' w='ip' lf='WHERE:NOW() - dt < 300']`
 * Count all pageviews from the beginning: `[slimstat f='count-all' w='*']`
 * Popular pages (this month): `[slimstat f='popular' w='resource' lf='content_type equals post' lc='post_link,count']`
 * Recent searches: `[slimstat f='recent' w='searchterms']`
@@ -172,6 +172,9 @@ Things can easily get fancy
 * `post_link`, returns post titles linked to their corresponding permalinks
 
 == Changelog ==
+
+= 2.4.2 =
+* Fixed a bug in calculating NOW() when the DB server's timezone was different from WP's timezone
 
 = 2.4.1 =
 * Added support for natural language date ranges: day equals today, year equals last year, etc. Have fun!
