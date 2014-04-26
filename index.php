@@ -3,7 +3,7 @@
 Plugin Name: WP SlimStat ShortCodes
 Plugin URI: http://wordpress.org/plugins/wp-slimstat-shortcodes/
 Description: Adds support for shortcodes to WP SlimStat
-Version: 2.4.2
+Version: 2.4.3
 Author: Camu
 Author URI: http://slimstat.getused.to.it
 */
@@ -122,6 +122,9 @@ class wp_slimstat_shortcodes{
 								break;
 							case 'ip':
 								$content .= long2ip($a_result['ip']);
+								break;
+							case 'count':
+								$content .= $a_result['counthits'];
 								break;
 							default:
 								$content .= $a_result[$a_column];
