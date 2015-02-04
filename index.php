@@ -3,7 +3,7 @@
 Plugin Name: WP SlimStat ShortCodes
 Plugin URI: http://wordpress.org/plugins/wp-slimstat-shortcodes/
 Description: Adds support for shortcodes to WP SlimStat
-Version: 2.4.3
+Version: 2.4.4
 Author: Camu
 Author URI: http://slimstat.getused.to.it
 */
@@ -30,7 +30,7 @@ class wp_slimstat_shortcodes{
 	protected static function _get_results($_attr = array()){
 		// Optional fields and other variables are defined to avoid PHP warnings
 		$join_tables = '';
-		$table_identifier = wp_slimstat_db::get_table_identifier($_attr['w']);
+		$table_identifier = wp_slimstat_db::get_table_alias($_attr['w']);
 		if ($table_identifier != 't1.'){
 			$join_tables = $table_identifier.'*,';
 		}
@@ -41,7 +41,7 @@ class wp_slimstat_shortcodes{
 		elseif ($_attr['lc'] != '*'){
 			$_attr['lc'] = explode(',', $_attr['lc']);
 			foreach($_attr['lc'] as $a_column){
-				$table_identifier = wp_slimstat_db::get_table_identifier($a_column);
+				$table_identifier = wp_slimstat_db::get_table_alias($a_column);
 				if ($table_identifier != 't1.' && strpos($join_tables, $table_identifier.'*') === false){
 					$join_tables .= $table_identifier.'*,';
 				}
@@ -92,7 +92,7 @@ class wp_slimstat_shortcodes{
 					return wp_slimstat_db::count_records($custom_where, $_attr['w'], true, false, $join_tables);
 
 				$_attr['f'] = 'get_'.$_attr['f'];
-				$results = wp_slimstat_db::$_attr['f'](wp_slimstat_db::get_table_identifier($_attr['w']).$_attr['w'], $custom_where, $join_tables);
+				$results = wp_slimstat_db::$_attr['f'](wp_slimstat_db::get_table_alias($_attr['w']).$_attr['w'], $custom_where, $join_tables);
 
 				// Format results
 				if (empty($results)) return $content;

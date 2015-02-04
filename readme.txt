@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=Z732J
 Tags: chart, analytics, visitors, users, spy, shortstat, tracking, reports, seo, referers, analyze, wassup, geolocation, online users, spider, tracker, pageviews, world map, stats, maxmind, flot, stalker, statistics, google+, monitor, seo
 Requires at least: 3.1
 Tested up to: 3.9
-Stable tag: 2.4.3
+Stable tag: 2.4.4
 
 == Description ==
 An extension for [WP SlimStat](http://wordpress.org/plugins/wp-slimstat/) to display your reports on pages and widgets
@@ -172,6 +172,9 @@ Things can easily get fancy
 * `post_link`, returns post titles linked to their corresponding permalinks
 
 == Changelog ==
+
+= 2.4.4 =
+* Fixed a compatibility issue with the new WP SlimStat API
 
 = 2.4.3 =
 * Fixed a compatibility issue with the new WP SlimStat API
