@@ -2,9 +2,9 @@
 Contributors: coolmann
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=Z732JS7KQ6RRL&lc=US&item_name=WP%20SlimStat&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted
 Tags: chart, analytics, visitors, users, spy, shortstat, tracking, reports, seo, referers, analyze, wassup, geolocation, online users, spider, tracker, pageviews, world map, stats, maxmind, flot, stalker, statistics, google+, monitor, seo
-Requires at least: 3.1
-Tested up to: 3.9
-Stable tag: 2.4.4
+Requires at least: 3.8
+Tested up to: 4.1
+Stable tag: 2.5
 
 == Description ==
 An extension for [WP SlimStat](http://wordpress.org/plugins/wp-slimstat/) to display your reports on pages and widgets
@@ -33,19 +33,19 @@ A [shortcode](http://codex.wordpress.org/Shortcode_API) is sort of a placeholder
 
 = What do shortcodes look like? =
 
-[slimstat f='FUNC' w='WHAT_COLUMN' lf='FILTERS' lc='COLUMNS' s='SEP']
+[slimstat f='FUNC' w='WHAT_COLUMN' lf='FILTERS' s='SEP']
 
 where
 
 * `f` [required] is the criteria to be used (count results, get popular or recent items)
 * `w` [required] defines what dataset you want to retrieve (browser, language, resource; here below you can find a complete list of columns)
 * `lf` [optional] specifies what conditions to use while retrieving the data (browser equals Firefox, country equals China); if the value starts with `WHERE:`, the string that follows will be used *verbatim* in the SQL query
-* `lc` [optional, default: WHAT_COLUMN] tells the plugin what data to return; use * for all the columns (defaults to the column specified in `w`)
+* `lc` [optional, default: WHAT_COLUMN] tells the plugin what data to return; it defaults to the column specified in `w`
 * `s` [optional] sets the character or string used to "separate" each piece of information in a row (defaults to `<span class='slimstat-item-separator'>,</span>`)
 
 = Frequently used codes =
 
-* Pageviews Today: `[slimstat f='count' lf='day equals today']`
+* Pageviews Today: `[slimstat f='count' w='ip' lf='day equals today']`
 * Unique Human Visitors Today: `[slimstat f='count' w='ip' lf='day equals today&&&visit_id is_greater_than 0']`
 * Currently Online: `[slimstat f='count-all' w='ip' lf='WHERE:NOW() - dt < 300']`
 * Count all pageviews from the beginning: `[slimstat f='count-all' w='*']`
@@ -57,7 +57,7 @@ where
 
 * `count` and `count-all` return a number
 * `recent` and `popular` return a bulleted list of elements
-* `custom`, used along with `filterby` to run a custom SQL query - i.e. `filterby='SELECT * FROM wp_slim_stats t1...'`; it returns a list of elements
+* `custom`, used along with `WHERE` to run a custom SQL query - i.e. `lf='WHERE:SELECT * FROM wp_slim_stats t1...'`; it returns a list of elements
 
 = Available keys (WHAT_COLUMN) =
 
@@ -172,6 +172,9 @@ Things can easily get fancy
 * `post_link`, returns post titles linked to their corresponding permalinks
 
 == Changelog ==
+
+= 2.5 =
+* Code has been cleaned up and updated to leverage the recent updates in our APIs
 
 = 2.4.4 =
 * Fixed a compatibility issue with the new WP SlimStat API
