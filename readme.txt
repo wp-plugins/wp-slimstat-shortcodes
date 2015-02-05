@@ -16,7 +16,7 @@ have to do is to add a shortcode to the page where you want the stats to be disp
 
 = Requirements =
 * Wordpress 3.1 or higher
-* At least [WP Slimstat 3.6](http://wordpress.org/plugins/wp-slimstat/)
+* At least [WP Slimstat 3.9.4](http://wordpress.org/plugins/wp-slimstat/)
 
 == Installation ==
 
