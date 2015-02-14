@@ -3,8 +3,8 @@ Contributors: coolmann
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=Z732JS7KQ6RRL&lc=US&item_name=WP%20SlimStat&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted
 Tags: chart, analytics, visitors, users, spy, shortstat, tracking, reports, seo, referers, analyze, wassup, geolocation, online users, spider, tracker, pageviews, world map, stats, maxmind, flot, stalker, statistics, google+, monitor, seo
 Requires at least: 3.8
-Tested up to: 4.1
-Stable tag: 2.5
+Tested up to: 4.2
+Stable tag: 2.5.1
 
 == Description ==
 An extension for [WP SlimStat](http://wordpress.org/plugins/wp-slimstat/) to display your reports on pages and widgets
@@ -172,6 +172,9 @@ Things can easily get fancy
 * `post_link`, returns post titles linked to their corresponding permalinks
 
 == Changelog ==
+
+= 2.5.1 =
+* Smarter handling of the permalink structure (thank you, [Tomcat0754](https://wordpress.org/support/topic/lcpost_link-does-not-show-full-link))
 
 = 2.5 =
 * Code has been cleaned up and updated to leverage the recent updates in our APIs

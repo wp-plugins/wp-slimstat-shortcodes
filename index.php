@@ -3,7 +3,7 @@
 Plugin Name: WP SlimStat ShortCodes
 Plugin URI: http://wordpress.org/plugins/wp-slimstat-shortcodes/
 Description: Adds support for shortcodes to WP SlimStat
-Version: 2.5
+Version: 2.5.1
 Author: Camu
 Author URI: http://slimstat.getused.to.it
 */
@@ -66,7 +66,7 @@ class wp_slimstat_shortcodes{
 		}
 		
 		$separator = !empty($_params['s'])?$_params['s']:', ';
-		
+
 		switch($_params['f']){
 			// Custom SQL: use the lf param to retrieve the data; no syntax check is done!
 			case 'custom':
@@ -121,14 +121,17 @@ class wp_slimstat_shortcodes{
 
 					foreach($columns_to_list as $a_column){
 						$content .= "<span class='col-$a_column'>";
-
+						
+						$permalinks_enabled = get_option('permalink_structure');
+						$clean_resource = empty($permalinks_enabled)?$a_result['resource']:strtok($a_result['resource'], '?');
+						
 						switch($a_column){
 							case 'post_link':
-								$post_id = url_to_postid(strtok($a_result['resource'], '?'));
+								$post_id = url_to_postid($clean_resource);
 								if ($post_id > 0)
-									$content .= "<a href='{$a_result['resource']}'>".get_the_title($post_id).'</a>';
+									$content .= "<a href='$clean_resource'>".get_the_title($post_id).'</a>';
 								else 
-									$content .= strtok($a_result['resource'], '?');
+									$content .= $clean_resource;
 								break;
 
 							case 'dt':
